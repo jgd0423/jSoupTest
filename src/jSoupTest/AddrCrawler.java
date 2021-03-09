@@ -2,43 +2,77 @@ package jSoupTest;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.jsoup.Connection;
 
 public class AddrCrawler {
 	public static void main(String[] args) {
 		try {
-            // 수집 대상 URL
-            String URL = "https://oltremare.shop/index.html";
+            // 수집 대상 URL            
+            ArrayList<String> URLs = new ArrayList<>();
+            URLs.add("https://oltremare.shop/index.html");
+            URLs.add("http://mildcountry.kr/index.html");
+            URLs.add("http://kicks-boutique.kr/main.html");
+            URLs.add("http://festinalente.kr/");
+            URLs.add("https://pddl.kr/");
             
-            // Connection 생성
-            Connection conn = Jsoup.connect(URL);
- 
-            // HTML 파싱
-            //Document html = conn.get(); // conn.post();
             
-            // 파일로 읽기
-            File input = new File("c://test.txt");
-            Document html = Jsoup.parse(input, "UTF-8");
-            
-            // HTML 출력
-            System.out.println(html.toString());
-            
-            // txt 파일로 저장. .html도 됨
-//            BufferedWriter  writer = null;
-//            try {
-//                writer = new BufferedWriter(new FileWriter("c://test.txt"));
-//                writer.write(html.toString());
-//            }
-//            catch (IOException e) {
-//            	e.printStackTrace();
-//            }
+            for (int i = 0; i < URLs.size(); i++) {
+                // Connection 생성
+                Connection conn = Jsoup.connect(URLs.get(i));
+     
+                // HTML 파싱
+                Document doc = conn.get(); // conn.post();
+                
+                // 파일로 읽기
+                //File input = new File("c://test.txt");
+                //Document doc = Jsoup.parse(html, "UTF-8");
+                
+                Element footer;
+                footer = doc.getElementById("footer");
+                
+                if (footer == null) {
+                	footer = doc.getElementsByTag("footer").first();
+                }
+                
+                String footerStr = footer.toString().toLowerCase();
+                
+                int addressIndex = footerStr.lastIndexOf("add");
+                
+                String footerStrIndexing = footerStr.substring(addressIndex);
+                
+                int leftAngleBracketIndex = footerStrIndexing.indexOf("<");
+                
+                footerStrIndexing = footerStrIndexing.substring(0, leftAngleBracketIndex);
+                footerStrIndexing = footerStrIndexing.trim();
+                
+                // HTML 출력
+                //System.out.println(doc.toString());
+                System.out.println("* 가게 URL : " + URLs.get(i));
+                System.out.println("* add 위치 : " + addressIndex);
+                System.out.println(footerStrIndexing);
+                System.out.println("===================================================================================");
+                
+                // txt 파일로 저장. .html도 됨
+//                BufferedWriter  writer = null;
+//                try {
+//                    writer = new BufferedWriter(new FileWriter("c://test.txt"));
+//                    writer.write(html.toString());
+//                }
+//                catch (IOException e) {
+//                	e.printStackTrace();
+//                }
+            }
+
             
         } catch (IOException e) {
             e.printStackTrace();
