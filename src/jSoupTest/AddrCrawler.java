@@ -15,27 +15,31 @@ import java.util.ArrayList;
 import org.jsoup.Connection;
 
 public class AddrCrawler {
-	public static void findTag(Element element) {
+	public static String findTag(Element element) {
 		int innerTextLen = 0;
+		String innerText = null;
 		if (element.ownText().toLowerCase().indexOf("address") != -1 || element.ownText().toLowerCase().indexOf("주소") != -1) {
 			innerTextLen = element.ownText().length();
 			if (innerTextLen > 10) {
-				System.out.println(element.ownText());
-				return;				
+				innerText = element.ownText();
 			} else {
-				System.out.println(element.parent().ownText());
-				return;
+				innerText = element.parent().ownText();
 			}
+			return innerText;				
 		}
 		
 		Elements elementChildren = element.children();
 		for (int i = 0; i < elementChildren.size(); i ++) {
 			Element childElement = elementChildren.get(i);
-			findTag(childElement);
+			innerText = findTag(childElement);
+			if (innerText != null) {				
+				innerTextLen = innerText.length();
+			}
 			if (innerTextLen > 0) {
-				return;
+				return innerText;
 			}
 		}
+		return innerText;
 	}
 	
 	public static void main(String[] args) {
@@ -63,26 +67,17 @@ public class AddrCrawler {
                 //File input = new File("c://test.txt");
                 //Document doc = Jsoup.parse(html, "UTF-8");
                 
-                Element footer;
-                int addressIndex;
-                footer = doc.getElementById("footer");
-                
-                if (footer == null) {
-                	footer = doc.getElementsByTag("footer").first();
-                }
-                
-                
+                String innerText = findTag(doc);
                 
                 // HTML 출력
                 System.out.println("* 가게 URL: " + URLs.get(i));
                 
-                System.out.print("파싱 완료 문자: ");
-                findTag(doc);
+                System.out.println("파싱 완료 문자: " + innerText);
                 System.out.println();
                 System.out.println("============================================================================================");
                 
                 // txt 파일로 저장. .html도 됨
-//                BufferedWriter  writer = null;
+//                BufferedWriter writer = null;
 //                try {
 //                    writer = new BufferedWriter(new FileWriter("c://test.txt"));
 //                    writer.write(html.toString());
