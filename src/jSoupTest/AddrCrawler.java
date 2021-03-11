@@ -29,7 +29,7 @@ public class AddrCrawler {
 		}
 		
 		Elements elementChildren = element.children();
-		for (int i = 0; i < elementChildren.size(); i ++) {
+		for (int i = 0; i < elementChildren.size(); i++) {
 			Element childElement = elementChildren.get(i);
 			innerText = findTag(childElement);
 			if (innerText != null) {				
@@ -86,8 +86,6 @@ public class AddrCrawler {
 //                	e.printStackTrace();
 //                }
             }
-
-            
         } catch (IOException e) {
             e.printStackTrace();
         }
